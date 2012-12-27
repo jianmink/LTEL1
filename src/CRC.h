@@ -30,14 +30,10 @@
 
 #include "Text.h"
 
-class String;
-
 class CRC{
-	int L;
-	string gp;
+	GeneratorPolynomials gp;
 public:
 	void setGp(string );
-	bool check(String, String );
 	bool check(CRCEnable* b);
 };
 

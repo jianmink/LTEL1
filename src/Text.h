@@ -31,11 +31,27 @@
 #include <iostream>
 using namespace std;
 
+class GeneratorPolynomials{
+int L;
+string gp;
+public:
+	void set(string aGp)
+	{
+		gp = aGp;
+		L = aGp.length() - 1;
+	}
+	string getGpString()
+	{
+		return gp;
+	}
+};
 
 class CRCEnable{
 public:
-	virtual bool isDivideRemainderZero(string)=0;
+	virtual bool isDivideRemainderZero(GeneratorPolynomials)=0;
 };
+
+
 
 class String:public CRCEnable{
 string s;
@@ -46,14 +62,14 @@ public:
 	String& operator=(string str){s=str; return *this;}
 	bool operator ==(String str);
 	String operator+(String str);
-
-
 //CRCEnable
-	bool isDivideRemainderZero(string);
+	bool isDivideRemainderZero(GeneratorPolynomials);
 	string strip(string);
 private:
 	string Xor(string, string);
 };
+
+
 
 
 #endif /* TEXT_H_ */

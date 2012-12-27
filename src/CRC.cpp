@@ -26,12 +26,6 @@
 
 #include "CRC.h"
 
-bool CRC::check(String a, String p)
-{
-	String b(a + p);
-	return b.isDivideRemainderZero(gp);
-}
-
 bool CRC::check(CRCEnable* b)
 {
 	return b->isDivideRemainderZero(gp);
@@ -39,8 +33,7 @@ bool CRC::check(CRCEnable* b)
 
 void CRC::setGp(string aGp)
 {
-	gp = aGp;
-	L = aGp.length() - 1;
+	gp.set(aGp);
 }
 
 

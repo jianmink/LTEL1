@@ -41,19 +41,20 @@ string String::strip(string str)
 		return str.substr(i);
 }
 
-bool String::isDivideRemainderZero(string gp)
+bool String::isDivideRemainderZero(GeneratorPolynomials gp)
 {
 	string& b=s;
 	string bb=strip(b);
-
 	if(bb=="")
 		return true;
 
-	if(bb.length()<gp.length())
+	string gpStr=gp.getGpString();
+
+	if(bb.length()<gpStr.length())
 		return false;
 
-	String bbb=Xor(bb.substr(0,gp.length()),gp)
-		+bb.substr(gp.length());
+	String bbb=Xor(bb.substr(0,gpStr.length()),gpStr)
+		+bb.substr(gpStr.length());
 
 	return bbb.isDivideRemainderZero(gp);
 }

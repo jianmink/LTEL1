@@ -3,10 +3,11 @@
 
 #include "CRC.h"
 
+// generator polynomials is gcrc2(D)=D+1
 TEST_GROUP(TestCrcCheck)
 {
 	CRC crc;
-	String str;
+	String b;
 	void setup()
 	{
 		crc.setGp("11");
@@ -15,33 +16,30 @@ TEST_GROUP(TestCrcCheck)
 
 TEST(TestCrcCheck,INPUT_EMPTY_STRING)
 {
-	bool result=crc.check("","");
-	CHECK_TRUE(result);
+	String b("");
+	CHECK_TRUE(crc.check(&b));
 }
 
 
 TEST(TestCrcCheck,INPUT_STRING_1)
 {
-	bool result=crc.check("1","1");
-	CHECK_TRUE(result);
+	String b("1");
+	b=b+"1";
+	CHECK_TRUE(crc.check(&b));
 }
 
 TEST(TestCrcCheck,INPUT_STRING_2)
 {
-	bool result=crc.check("0","1");
-	CHECK_FALSE(result);
+	String b("0");
+	b=b+"1";
+	CHECK_FALSE(crc.check(&b));
 }
 
 TEST(TestCrcCheck,INPUT_STRING_3)
 {
-	bool result=crc.check("0","0");
-	CHECK_TRUE(result);
-}
-
-TEST(TestCrcCheck,INPUT_STRING_4)
-{
-	bool result=crc.check("1","0");
-	CHECK_FALSE(result);
+	String b("0");
+	b=b+"0";
+	CHECK_TRUE(crc.check(&b));
 }
 
 
