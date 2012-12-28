@@ -14,7 +14,7 @@
  *
  ***********************************************************************
  *
- * File Name:   Text.h
+ * File Name:   String.cpp
  * Description: This file contains definitions for 
  *                      up¡­
  * -------------------------------------------------------------------------------------------------------
@@ -24,52 +24,67 @@
  * 2012-12-27                 jianmink                  Initial creation ...                        
  ***********************************************************************/
 
+#include "BitString.h"
 
-#ifndef TEXT_H_
-#define TEXT_H_
+string BitString::strip(string str)
+{
+	int i = 0;
+	for (; i < str.length() && str[i] == '0'; i++);
 
-#include <iostream>
-using namespace std;
+	if (i == str.length())
+		return "";
+	else
+		return str.substr(i);
+}
 
-class GeneratorPolynomials{
-int L;
-string gp;
-public:
-	void set(string aGp)
+bool BitString::isDivideRemainderZero(GeneratorPolynomials aGp)
+{
+	string b = strip(s);
+	if (b == "")
+		return true;
+
+	string gp = aGp.getGp();
+
+	if (b.length() < gp.length())
+		return false;
+
+	BitString bbb = Xor(b.substr(0, gp.length()), gp) + b.substr(gp.length());
+
+	return bbb.isDivideRemainderZero(aGp);
+}
+
+string BitString::Xor(string a, string b)
+{
+	string r = a;
+	if (a.length() != b.length())
+		return "length failure";
+
+	for (int i = 0; i < a.length(); i++)
 	{
-		gp = aGp;
-		L = aGp.length() - 1;
+		if (a[i] == b[i])
+			r[i] = '0';
+		else
+			r[i] = '1';
 	}
-	string getGpString()
-	{
-		return gp;
-	}
-};
+	return r;
+}
 
-class CRCEnable{
-public:
-	virtual bool isDivideRemainderZero(GeneratorPolynomials)=0;
-};
+BitString BitString::divide(GeneratorPolynomials aGp)
+{
+	string a = strip(s);
+	string gp =aGp.getGp();
 
+	if(a.length()<gp.length())
+		return a;
 
+	BitString remainder = Xor(a.substr(0,gp.length()),gp)
+		+ a.substr(gp.length());
 
-class String:public CRCEnable{
-string s;
-public:
-	String();
-	String(string str){s=str;}
-	String(const char* c){s=string(c);}
-	String& operator=(string str){s=str; return *this;}
-	bool operator ==(String str);
-	String operator+(String str);
-//CRCEnable
-	bool isDivideRemainderZero(GeneratorPolynomials);
-	string strip(string);
-private:
-	string Xor(string, string);
-};
+	return remainder.divide(aGp);
+}
 
-
-
-
-#endif /* TEXT_H_ */
+void BitString::leftShift(int p)
+{
+	for(int i=0; i<p; i++)
+		s+="0";
+}

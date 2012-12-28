@@ -37,3 +37,8 @@ void CRC::setGp(string aGp)
 }
 
 
+BitString CRC::encode(BitString* a)
+{
+	a->leftShift(gp.getL());
+	return a->divide(gp);
+}

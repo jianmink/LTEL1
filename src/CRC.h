@@ -28,13 +28,14 @@
 #ifndef CRC_H_
 #define CRC_H_
 
-#include "Text.h"
+#include "BitString.h"
 
 class CRC{
 	GeneratorPolynomials gp;
 public:
 	void setGp(string );
 	bool check(CRCEnable* b);
+	BitString encode(BitString* a);
 };
 
 

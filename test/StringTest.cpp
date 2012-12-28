@@ -5,7 +5,7 @@
 
 TEST_GROUP(TestString)
 {
-	String str;
+	BitString str;
 };
 
 
