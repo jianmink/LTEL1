@@ -26,34 +26,23 @@
 
 #include "BitString.h"
 
-string BitString::strip(string str)
+string BitString::strip()
 {
 	int i = 0;
-	for (; i < str.length() && str[i] == '0'; i++);
+	for (; i < s.length() && s[i] == '0'; i++);
 
-	if (i == str.length())
+	if (i == s.length())
 		return "";
 	else
-		return str.substr(i);
+		return s.substr(i);
 }
 
-bool BitString::isDivideRemainderZero(GeneratorPolynomials aGp)
+bool BitStringCRCHelper::isDivisible(BitString s, GeneratorPolynomials aGp)
 {
-	string b = strip(s);
-	if (b == "")
-		return true;
-
-	string gp = aGp.getGp();
-
-	if (b.length() < gp.length())
-		return false;
-
-	BitString bbb = Xor(b.substr(0, gp.length()), gp) + b.substr(gp.length());
-
-	return bbb.isDivideRemainderZero(aGp);
+	return BitString("")==divide(s,aGp);
 }
 
-string BitString::Xor(string a, string b)
+string BitStringCRCHelper::Xor(string a, string b)
 {
 	string r = a;
 	if (a.length() != b.length())
@@ -69,9 +58,9 @@ string BitString::Xor(string a, string b)
 	return r;
 }
 
-BitString BitString::divide(GeneratorPolynomials aGp)
+BitString BitStringCRCHelper::divide(BitString s, GeneratorPolynomials aGp)
 {
-	string a = strip(s);
+	string a = s.strip();
 	string gp =aGp.getGp();
 
 	if(a.length()<gp.length())
@@ -83,8 +72,4 @@ BitString BitString::divide(GeneratorPolynomials aGp)
 	return remainder.divide(aGp);
 }
 
-void BitString::leftShift(int p)
-{
-	for(int i=0; i<p; i++)
-		s+="0";
-}
+

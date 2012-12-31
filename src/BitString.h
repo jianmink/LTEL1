@@ -25,8 +25,8 @@
  ***********************************************************************/
 
 
-#ifndef TEXT_H_
-#define TEXT_H_
+#ifndef BITSTRING_H_
+#define BITSTRING_H_
 
 #include <iostream>
 using namespace std;
@@ -44,38 +44,42 @@ public:
 	int getL(){return L;}
 };
 
-//class CRCEnable{
-//public:
-//	virtual bool isDivideRemainderZero(GeneratorPolynomials)=0;
-//};
-
-
-class BitString//: public CRCEnable{
+class BitString;
+class BitStringCRCHelper
 {
+public:
+	BitString divide(BitString, GeneratorPolynomials);
+	string Xor(string, string);
+	bool isDivisible(BitString, GeneratorPolynomials);
+
+};
+
+class BitString
+{
+friend class BitStringCRCHelper;
 string s;
+BitStringCRCHelper helper;
 public:
 	BitString(){s="";}
 	BitString(string str){s=str;}
 	BitString(const char* c){s=string(c);}
 	BitString& operator=(string str){s=str; return *this;}
+	BitString& operator=(const char* c){s=string(c); return *this;}
 	bool operator ==(BitString str){return s==str.s;}
 	BitString operator+(BitString str){return BitString(s+str.s);}
 	char& operator[](int index){return s[index];}
-
 	string toString(){return s;}
-
-	void leftShift(int);
+	void operator<<(int p){for(int i=0; i<p; i++)s+="0";}
 
 //CRCEnable
-	bool isDivideRemainderZero(GeneratorPolynomials);
-	string strip(string);
-	BitString divide(GeneratorPolynomials);
+	bool isDivisible(GeneratorPolynomials gp)
+	{return helper.isDivisible(s,gp);	}
+	BitString divide(GeneratorPolynomials gp)
+	{return helper.divide(s,gp);}
 
 private:
-	string Xor(string, string);
+	string strip();
 };
-
-
 
 
 #endif /* TEXT_H_ */

@@ -34,7 +34,7 @@ const string CRC::GCRC8="110011011";
 
 bool CRC::check(BitString* b)
 {
-	return b->isDivideRemainderZero(gp);
+	return b->isDivisible(gp);
 }
 
 void CRC::setGp(string aGp)
@@ -45,6 +45,6 @@ void CRC::setGp(string aGp)
 
 BitString CRC::encode(BitString* a)
 {
-	a->leftShift(gp.getL());
+	*a<<gp.getL();
 	return a->divide(gp);
 }
