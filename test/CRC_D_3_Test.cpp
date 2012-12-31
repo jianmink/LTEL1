@@ -14,11 +14,16 @@ TEST_GROUP(TestCRCD3)
 	}
 };
 
+TEST(TestCRCD3,INPUT_EMPTY_STRING)
+{
+	BitString b("");
+	CHECK_TRUE(crc.validate(&b));
+}
 
 TEST(TestCRCD3,STRING_11010011101100)
 {
 	BitString b("11010011101100100");
-	CHECK_TRUE(crc.check(&b));
+	CHECK_TRUE(crc.validate(&b));
 }
 
 TEST(TestCRCD3,Encode)

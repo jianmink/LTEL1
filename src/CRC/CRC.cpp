@@ -14,60 +14,37 @@
  *
  ***********************************************************************
  *
- * File Name:   Text.h
+ * File Name:   CRC.cpp
  * Description: This file contains definitions for 
  *                      up¡­
  * -------------------------------------------------------------------------------------------------------
  * Change History :                                                                                                 
  * Date                   Author                  Description (FR/CR)                              
  * -------------      -----------------         ----------------------------------------------------------------
- * 2012-12-27                 jianmink                  Initial creation ...                        
+ * 2012-12-26                 jianmink                  Initial creation ...                        
  ***********************************************************************/
 
+#include "CRC.h"
 
-#ifndef BITSTRING_H_
-#define BITSTRING_H_
 
-#include <iostream>
-using namespace std;
+const string CRC::GCRC24A="1100001100100110011111011";
+const string CRC::GCRC24B="1100000000000000001100011";
+const string CRC::GCRC16="10001000000100001";
+const string CRC::GCRC8="110011011";
 
-#include "GeneratorPolynomials.h"
-
-class BitString;
-class BitStringCRCHelper
+bool CRC::validate(BitString* b)
 {
-public:
-	BitString divide(BitString, GeneratorPolynomials);
-	string Xor(string, string);
-	bool isDivisible(BitString, GeneratorPolynomials);
-};
+	return b->isDivisible(gp);
+}
 
-class BitString
+void CRC::setGp(string aGp)
 {
-friend class BitStringCRCHelper;
-string s;
-BitStringCRCHelper helper;
-public:
-	BitString(){s="";}
-	BitString(string str){s=str;}
-	BitString(const char* c){s=string(c);}
-	BitString& operator=(string str){s=str; return *this;}
-	BitString& operator=(const char* c){s=string(c); return *this;}
-	bool operator ==(BitString str){return s==str.s;}
-	BitString operator+(BitString str){return BitString(s+str.s);}
-	char& operator[](int index){return s[index];}
-	string toString(){return s;}
-	void operator<<(int p){for(int i=0; i<p; i++)s+="0";}
-
-//CRCEnable
-	bool isDivisible(GeneratorPolynomials gp)
-	{return helper.isDivisible(s,gp);	}
-	BitString divide(GeneratorPolynomials gp)
-	{return helper.divide(s,gp);}
-
-private:
-	string strip();
-};
+	gp.set(aGp);
+}
 
 
-#endif /* TEXT_H_ */
+BitString CRC::encode(BitString* a)
+{
+	*a<<gp.getL();
+	return a->divide(gp);
+}

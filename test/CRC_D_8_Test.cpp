@@ -17,17 +17,17 @@ TEST_GROUP(TestCRCD8)
 TEST(TestCRCD8,INPUT_EMPTY_STRING)
 {
 	BitString b("");
-	CHECK_TRUE(crc.check(&b));
+	CHECK_TRUE(crc.validate(&b));
 }
 
 TEST(TestCRCD8,STRING_1)
 {
 	BitString b("110011011");
-	CHECK_TRUE(crc.check(&b));
+	CHECK_TRUE(crc.validate(&b));
 }
 
 TEST(TestCRCD8,STRING_2)
 {
 	BitString b("110011010");
-	CHECK_FALSE(crc.check(&b));
+	CHECK_FALSE(crc.validate(&b));
 }

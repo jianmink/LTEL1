@@ -16,7 +16,8 @@ CPP_PLATFORM = Gcc
 # so that memory leak detection does not conflict with stl.
 CPPUTEST_MEMLEAK_DETECTOR_NEW_MACRO_FILE = -include src/ExamplesNewOverrides.h
 SRC_DIRS = \
-	src
+	src\
+	src/CRC
 
 TEST_SRC_DIRS = \
 	test
@@ -24,6 +25,7 @@ TEST_SRC_DIRS = \
 INCLUDE_DIRS =\
   .\
   src\
+  src/CRC\
   $(CPPUTEST_HOME)/include\
 
 

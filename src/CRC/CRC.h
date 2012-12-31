@@ -14,7 +14,7 @@
  *
  ***********************************************************************
  *
- * File Name:   CRC.cpp
+ * File Name:   CRC.h
  * Description: This file contains definitions for 
  *                      up¡­
  * -------------------------------------------------------------------------------------------------------
@@ -24,27 +24,24 @@
  * 2012-12-26                 jianmink                  Initial creation ...                        
  ***********************************************************************/
 
-#include "CRC.h"
 
+#ifndef CRC_H_
+#define CRC_H_
 
-const string CRC::GCRC24A="1100001100100110011111011";
-const string CRC::GCRC24B="1100000000000000001100011";
-const string CRC::GCRC16="10001000000100001";
-const string CRC::GCRC8="110011011";
+#include "BitString.h"
 
-bool CRC::check(BitString* b)
-{
-	return b->isDivisible(gp);
-}
+class CRC{
+	GeneratorPolynomials gp;
+public:
+	void setGp(string );
+	bool validate(BitString*);
+	BitString encode(BitString*);
 
-void CRC::setGp(string aGp)
-{
-	gp.set(aGp);
-}
+public:
+	static const string GCRC24A;
+	static const string GCRC24B;
+	static const string GCRC16;
+	static const string GCRC8;
+};
 
-
-BitString CRC::encode(BitString* a)
-{
-	*a<<gp.getL();
-	return a->divide(gp);
-}
+#endif /* CRC_H_ */
