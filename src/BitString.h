@@ -44,14 +44,14 @@ public:
 	int getL(){return L;}
 };
 
-class CRCEnable{
-public:
-	virtual bool isDivideRemainderZero(GeneratorPolynomials)=0;
-};
+//class CRCEnable{
+//public:
+//	virtual bool isDivideRemainderZero(GeneratorPolynomials)=0;
+//};
 
 
-
-class BitString:public CRCEnable{
+class BitString//: public CRCEnable{
+{
 string s;
 public:
 	BitString(){s="";}
@@ -60,6 +60,7 @@ public:
 	BitString& operator=(string str){s=str; return *this;}
 	bool operator ==(BitString str){return s==str.s;}
 	BitString operator+(BitString str){return BitString(s+str.s);}
+	char& operator[](int index){return s[index];}
 
 	string toString(){return s;}
 

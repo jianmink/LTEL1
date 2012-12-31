@@ -14,36 +14,29 @@
  *
  ***********************************************************************
  *
- * File Name:   CRC.h
+ * File Name:   TurboCode.h
  * Description: This file contains definitions for 
  *                      up¡­
  * -------------------------------------------------------------------------------------------------------
  * Change History :                                                                                                 
  * Date                   Author                  Description (FR/CR)                              
  * -------------      -----------------         ----------------------------------------------------------------
- * 2012-12-26                 jianmink                  Initial creation ...                        
+ * 2012-12-28                 jianmink                  Initial creation ...                        
  ***********************************************************************/
 
 
-#ifndef CRC_H_
-#define CRC_H_
+#ifndef TURBOCODE_H_
+#define TURBOCODE_H_
 
-#include "BitString.h"
-
-class CRC{
-	GeneratorPolynomials gp;
-public:
-	void setGp(string );
-	bool check(BitString*);
-	BitString encode(BitString*);
-
-public:
-	static const string GCRC24A;
-	static const string GCRC24B;
-	static const string GCRC16;
-	static const string GCRC8;
+struct TurboCodeItem{
+	int i;
+	int k;
+	int f1;
+	int f2;
 };
 
+extern TurboCodeItem gTurboCodeTable[];
 
 
-#endif /* CRC_H_ */
+
+#endif /* TURBOCODE_H_ */

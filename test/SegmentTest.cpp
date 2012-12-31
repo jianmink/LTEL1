@@ -14,36 +14,87 @@
  *
  ***********************************************************************
  *
- * File Name:   CRC.h
+ * File Name:   SegmentTest.cpp
  * Description: This file contains definitions for 
  *                      up¡­
  * -------------------------------------------------------------------------------------------------------
  * Change History :                                                                                                 
  * Date                   Author                  Description (FR/CR)                              
  * -------------      -----------------         ----------------------------------------------------------------
- * 2012-12-26                 jianmink                  Initial creation ...                        
+ * 2012-12-28                 jianmink                  Initial creation ...                        
  ***********************************************************************/
 
 
-#ifndef CRC_H_
-#define CRC_H_
+#include "CppUTest/TestHarness.h"
 
-#include "BitString.h"
+#include "Segment.h"
+#include "CRC.h"
 
-class CRC{
-	GeneratorPolynomials gp;
-public:
-	void setGp(string );
-	bool check(BitString*);
-	BitString encode(BitString*);
+TEST_GROUP(TestSegment)
+{
+	Segment segment;
+	CRC crc;
+	BitString b;
+	void setup()
+	{
+		segment.setZ(6144);
+		crc.setGp(CRC::GCRC24A);
+	}
 
-public:
-	static const string GCRC24A;
-	static const string GCRC24B;
-	static const string GCRC16;
-	static const string GCRC8;
 };
 
+TEST(TestSegment, SegmentNum_1)
+{
+	int B=10;
+	segment.prepare(B);
+	LONGS_EQUAL(1,segment.getC());
+	LONGS_EQUAL(10,segment.getB_());
+	LONGS_EQUAL(0,segment.getL());
+}
+
+TEST(TestSegment, SegmentNum_2)
+{
+	int B=6145;
+	segment.prepare(B);
+	LONGS_EQUAL(24,segment.getL());
+	LONGS_EQUAL(2,segment.getC());
+	LONGS_EQUAL(6145+24*2,segment.getB_());
+}
 
 
-#endif /* CRC_H_ */
+TEST(TestSegment, SegmentSize)
+{
+	int B=10;
+	segment.prepare(B);
+
+	LONGS_EQUAL(40, segment.getK1());
+}
+
+TEST(TestSegment, SegmentSize_large)
+{
+	int B=6145;
+	segment.prepare(B);
+
+	LONGS_EQUAL(3136, segment.getK1());
+}
+
+int ceil(float);
+TEST(TestSegment, ceil)
+{
+	LONGS_EQUAL(2,ceil(1.00408));
+	LONGS_EQUAL(1,ceil(1));
+}
+
+
+TEST(TestSegment, fill_0)
+{
+	BitString b("1101001110100");
+	BitString p=crc.encode(&b);
+
+	BitString b_=b+p;
+
+	segment.prepare(b_.toString().length());
+	segment.encode(b_,'0');
+
+}
+

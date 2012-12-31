@@ -26,7 +26,13 @@
 
 #include "CRC.h"
 
-bool CRC::check(CRCEnable* b)
+
+const string CRC::GCRC24A="1100001100100110011111011";
+const string CRC::GCRC24B="1100000000000000001100011";
+const string CRC::GCRC16="10001000000100001";
+const string CRC::GCRC8="110011011";
+
+bool CRC::check(BitString* b)
 {
 	return b->isDivideRemainderZero(gp);
 }
