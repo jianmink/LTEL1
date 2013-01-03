@@ -35,22 +35,35 @@ using namespace std;
 
 Segments::Segments()
 {
-	L=0;
-	C=0;
-	B_=0;
-	K1=0;
-	K2=0;
+	//config 
+	gpLen=0;
+	maxSegmentSize=6144;
+	
 
-	c=NULL;
-	Kr=NULL;
+	//input
+	str="";
+
+	//output 
+	bits=NULL;
+	segmentLenArray=NULL;
+	
+	//state
+	segmentNum=0;
+	bigSegmentNum=0;
+	smallSegmentNum=0;
+	
+	bitNumWithoutFiller=0;
+	bigSegmentSize=0;
+	smallSegmentSize=0;
+
 }
 
 Segments::~Segments()
 {
-	if(c)
-		delete[] c;
-	if(Kr)
-		delete[] Kr;
+	if(bits)
+		delete[] bits;
+	if(segmentLenArray)
+		delete[] segmentLenArray;
 }
 
 Segments& Segments::prepare(BitString b)
@@ -62,17 +75,17 @@ Segments& Segments::prepare(BitString b)
 
 void Segments::prepare(int B)
 {
-	if(B<=Z)
+	if(B<=maxSegmentSize)
 	{
-		L=0;
-		C=1;
-		B_=B;
+		gpLen=0;
+		segmentNum=1;
+		bitNumWithoutFiller=B;
 	}
 	else
 	{
-		L=24;
-		C=ceil((float)B/(Z-L));
-		B_=B+C*L;
+		gpLen=24;
+		segmentNum=ceil((float)B/(maxSegmentSize-gpLen));
+		bitNumWithoutFiller=B+segmentNum*gpLen;
 	}
 
 	calculate();
@@ -83,61 +96,61 @@ void Segments::calculate()
 
 	int j=0;
 	while(gTurboCodeTable[j].i
-			&& C*gTurboCodeTable[j].k<B_)
+			&& segmentNum*gTurboCodeTable[j].k<bitNumWithoutFiller)
 	{
 		j++;
 	}
 
-	K1=gTurboCodeTable[j].k;
-	K2=gTurboCodeTable[j-1].k;
+	bigSegmentSize=gTurboCodeTable[j].k;
+	smallSegmentSize=gTurboCodeTable[j-1].k;
 
-	if(C==1)
+	if(segmentNum==1)
 	{
-		K2=0;
-		C1=1;
-		C2=0;
+		smallSegmentSize=0;
+		bigSegmentNum=1;
+		smallSegmentNum=0;
 	}
 	else
 	{
-		int deltaK=K1-K2;
-		C2=floar((float)(C*K1-B_)/deltaK);
-		C1=C-C2;
+		int deltaK=bigSegmentSize-smallSegmentSize;
+		smallSegmentNum=floar((float)(segmentNum*bigSegmentSize-bitNumWithoutFiller)/deltaK);
+		bigSegmentNum=segmentNum-smallSegmentNum;
 	}
 
-	F=C2*K2+C1*K1 -B_;
+	F=smallSegmentNum*smallSegmentSize+bigSegmentNum*bigSegmentSize -bitNumWithoutFiller;
 }
 
 void Segments::encode(char filler)
 {
-	c= new char[C*K1];
-	Kr= new int[C];
+	bits= new char[segmentNum*bigSegmentSize];
+	segmentLenArray= new int[segmentNum];
 
 	int k;
 	for(k=0; k<F; k++)
 	{
-		c[k]=filler;
+		bits[k]=filler;
 	}
 
 	int s=0;
 
-	for(int r=0; r<C; r++)
+	for(int r=0; r<segmentNum; r++)
 	{
-		if(r<C2)
-			Kr[r]=K2;
+		if(r<smallSegmentNum)
+			segmentLenArray[r]=smallSegmentSize;
 		else
-			Kr[r]=K1;
+			segmentLenArray[r]=bigSegmentSize;
 
 
-		while(k<Kr[r]-L)
+		while(k<segmentLenArray[r]-gpLen)
 		{
-			c[r*K1+k]=str.toString()[s];
+			bits[r*bigSegmentSize+k]=str.toString()[s];
 			k++;
 			s++;
 		}
 
-		if(C>1)
+		if(segmentNum>1)
 		{
-			encodeBlockCRC((char*)(&c[r*K1+0]),k,Kr[r]);
+			encodeBlockCRC((char*)(&bits[r*bigSegmentSize+0]),k,segmentLenArray[r]);
 		}
 
 		k=0;
@@ -154,7 +167,7 @@ void Segments::encodeBlockCRC(char* c, int start, int end)
 	BitString p=crc.encode(&bitStr);
 
 	for(int k=start; k<end; k++)
-		c[k]=p[k+L-end];
+		c[k]=p[k+gpLen-end];
 }
 
 BitString Segments::toString(char* c, int len)
@@ -174,9 +187,9 @@ BitString Segments::toString(int r)
 {
 	int offset =0;
 	for(int i=0; i<r; i++)
-		offset+=Kr[i];
+		offset+=segmentLenArray[i];
 
-	return toString(c+offset, Kr[r]);
+	return toString(bits+offset, segmentLenArray[r]);
 }
 
 

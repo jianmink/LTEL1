@@ -95,7 +95,7 @@ TEST(TestSegment, fill_0)
 
 	segments.prepare(b).encode();
 
-	LONGS_EQUAL(40, segments.Kr[0]);
+	LONGS_EQUAL(40, segments.segmentLenArray[0]);
 	STRCMP_EQUAL("0000000000000000000000001101001110100100",
 			segments.toString(0).toString().c_str());
 }

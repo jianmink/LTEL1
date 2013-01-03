@@ -35,36 +35,36 @@ class Segments
 BitString str;
 
 public:
-int L;
-int C;
-int B_;
-int Z;
+int gpLen;
+int segmentNum;
+int bitNumWithoutFiller;
+int maxSegmentSize;
 
-int K1;  //K+
-int K2;  //K_
+int bigSegmentSize;  //K+
+int smallSegmentSize;  //K_
 
-int C1;   //C+
-int C2;   //C_
+int bigSegmentNum;   //C+
+int smallSegmentNum;   //C_
 
 int F;
 
-char* c;
-int* Kr;
+char* bits;
+int* segmentLenArray;
 
 public:
 	Segments();
 	~Segments();
-	void setMaxBlockSizeInBit(int z){Z=z;}
-	int getMaxBlockSizeInBit(){return Z;}
+	void setMaxBlockSizeInBit(int z){maxSegmentSize=z;}
+	int getMaxBlockSizeInBit(){return maxSegmentSize;}
 	void prepare(int);
 	Segments& prepare(BitString);
 
-	int getCRCLen(){return L;}
-	int getNumSegments(){return C;}
-	int getNumBitsAfter(){return B_;}
+	int getCRCLen(){return gpLen;}
+	int getNumSegments(){return segmentNum;}
+	int getNumBitsAfter(){return bitNumWithoutFiller;}
 
-	int getKPlus(){return K1;}
-	int getKMinus(){return K2;}
+	int getKPlus(){return bigSegmentSize;}
+	int getKMinus(){return smallSegmentSize;}
 	void encode(char filler='0');
 
 	BitString toString(char*, int);
