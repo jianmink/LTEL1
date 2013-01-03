@@ -32,7 +32,7 @@
 class Segments
 {
 
-BitString str;
+BitString inputStr;
 
 public:
 int gpLen;
@@ -46,9 +46,9 @@ int smallSegmentSize;  //K_
 int bigSegmentNum;   //C+
 int smallSegmentNum;   //C_
 
-int F;
+int fillerNum;
 
-char* bits;
+char* outputBits;
 int* segmentLenArray;
 
 public:

@@ -41,10 +41,10 @@ Segments::Segments()
 	
 
 	//input
-	str="";
+	inputStr="";
 
 	//output 
-	bits=NULL;
+	outputBits=NULL;
 	segmentLenArray=NULL;
 	
 	//state
@@ -53,6 +53,8 @@ Segments::Segments()
 	smallSegmentNum=0;
 	
 	bitNumWithoutFiller=0;
+	fillerNum=0;
+
 	bigSegmentSize=0;
 	smallSegmentSize=0;
 
@@ -60,16 +62,16 @@ Segments::Segments()
 
 Segments::~Segments()
 {
-	if(bits)
-		delete[] bits;
+	if(outputBits)
+		delete[] outputBits;
 	if(segmentLenArray)
 		delete[] segmentLenArray;
 }
 
 Segments& Segments::prepare(BitString b)
 {
-	str=b;
-	prepare(str.toString().length());
+	inputStr=b;
+	prepare(inputStr.toString().length());
 	return *this;
 }
 
@@ -117,18 +119,18 @@ void Segments::calculate()
 		bigSegmentNum=segmentNum-smallSegmentNum;
 	}
 
-	F=smallSegmentNum*smallSegmentSize+bigSegmentNum*bigSegmentSize -bitNumWithoutFiller;
+	fillerNum=smallSegmentNum*smallSegmentSize+bigSegmentNum*bigSegmentSize -bitNumWithoutFiller;
 }
 
 void Segments::encode(char filler)
 {
-	bits= new char[segmentNum*bigSegmentSize];
+	outputBits= new char[segmentNum*bigSegmentSize];
 	segmentLenArray= new int[segmentNum];
 
 	int k;
-	for(k=0; k<F; k++)
+	for(k=0; k<fillerNum; k++)
 	{
-		bits[k]=filler;
+		outputBits[k]=filler;
 	}
 
 	int s=0;
@@ -143,14 +145,14 @@ void Segments::encode(char filler)
 
 		while(k<segmentLenArray[r]-gpLen)
 		{
-			bits[r*bigSegmentSize+k]=str.toString()[s];
+			outputBits[r*bigSegmentSize+k]=inputStr.toString()[s];
 			k++;
 			s++;
 		}
 
 		if(segmentNum>1)
 		{
-			encodeBlockCRC((char*)(&bits[r*bigSegmentSize+0]),k,segmentLenArray[r]);
+			encodeBlockCRC((char*)(&outputBits[r*bigSegmentSize+0]),k,segmentLenArray[r]);
 		}
 
 		k=0;
@@ -189,7 +191,7 @@ BitString Segments::toString(int r)
 	for(int i=0; i<r; i++)
 		offset+=segmentLenArray[i];
 
-	return toString(bits+offset, segmentLenArray[r]);
+	return toString(outputBits+offset, segmentLenArray[r]);
 }
 
 
