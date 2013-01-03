@@ -32,69 +32,70 @@
 
 TEST_GROUP(TestSegment)
 {
-	Segment segment;
+	Segments segments;
 	CRC crc;
 	BitString b;
+	int numOfBits;
+
 	void setup()
 	{
-		segment.setZ(6144);
+		segments.setMaxBlockSizeInBit(6144);
 		crc.setGp(CRC::GCRC24A);
 	}
 
 };
 
-TEST(TestSegment, SegmentNum_1)
+TEST(TestSegment, should_be_1_segment_for_num_of_bit_less_than_max_block_size)
 {
-	int B=10;
-	segment.prepare(B);
-	LONGS_EQUAL(1,segment.getC());
-	LONGS_EQUAL(10,segment.getB_());
-	LONGS_EQUAL(0,segment.getL());
+	int Z = segments.getMaxBlockSizeInBit();
+	numOfBits=Z-1;
+	segments.prepare(numOfBits);
+
+	LONGS_EQUAL(0,segments.getCRCLen());
+	LONGS_EQUAL(1,segments.getNumSegments());
+	LONGS_EQUAL(numOfBits,segments.getNumBitsAfter());
 }
 
-TEST(TestSegment, SegmentNum_2)
+TEST(TestSegment, should_be_2_segments_for_num_of_bit_more_than_max_block_size)
 {
-	int B=6145;
-	segment.prepare(B);
-	LONGS_EQUAL(24,segment.getL());
-	LONGS_EQUAL(2,segment.getC());
-	LONGS_EQUAL(6145+24*2,segment.getB_());
+	int Z = segments.getMaxBlockSizeInBit();
+	numOfBits=Z+1;
+	segments.prepare(numOfBits);
+
+	int crcLen=24;
+	int numSegments=2;
+	LONGS_EQUAL(crcLen,segments.getCRCLen());
+	LONGS_EQUAL(numSegments,segments.getNumSegments());
+	LONGS_EQUAL(numOfBits+crcLen*numSegments,segments.getNumBitsAfter());
 }
 
 
-TEST(TestSegment, SegmentSize)
+TEST(TestSegment, should_be_0_for_small_input_bit_sequence)
 {
-	int B=10;
-	segment.prepare(B);
+	numOfBits=10;
+	segments.prepare(numOfBits);
 
-	LONGS_EQUAL(40, segment.getK1());
+	LONGS_EQUAL(0, segments.getKMinus());
 }
 
-TEST(TestSegment, SegmentSize_large)
+TEST(TestSegment, segment_size_4_large_input_sequence)
 {
-	int B=6145;
-	segment.prepare(B);
+	numOfBits=6145;
+	segments.prepare(numOfBits);
 
-	LONGS_EQUAL(3136, segment.getK1());
+	LONGS_EQUAL(3136, segments.getKPlus());
+	LONGS_EQUAL(3072, segments.getKMinus());
 }
-
-int ceil(float);
-TEST(TestSegment, ceil)
-{
-	LONGS_EQUAL(2,ceil(1.00408));
-	LONGS_EQUAL(1,ceil(1));
-}
-
 
 TEST(TestSegment, fill_0)
 {
-	BitString b("1101001110100");
-	BitString p=crc.encode(&b);
+	BitString a("1101001110100");
+	BitString p("100");
+	BitString b=a+p;
 
-	BitString b_=b+p;
+	segments.prepare(b).encode();
 
-	segment.prepare(b_.toString().length());
-	segment.encode(b_,'0');
-
+	LONGS_EQUAL(40, segments.Kr[0]);
+	STRCMP_EQUAL("0000000000000000000000001101001110100100",
+			segments.toString(0).toString().c_str());
 }
-

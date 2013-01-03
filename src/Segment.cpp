@@ -16,7 +16,7 @@
  *
  * File Name:   Segment.cpp
  * Description: This file contains definitions for 
- *                      up¡­
+ *                      Code block segmentation and code block CRC attachment
  * -------------------------------------------------------------------------------------------------------
  * Change History :                                                                                                 
  * Date                   Author                  Description (FR/CR)                              
@@ -31,23 +31,9 @@
 #include <iostream>
 using namespace std;
 
+#include "MyMath.h"
 
-int ceil(float v)
-{
-	int n=(int)v;
-	if(v-n!=0)
-		return n+1;
-
-	return n;
-}
-
-int floar(float v)
-{
-	return (int)v;
-}
-
-
-Segment::Segment()
+Segments::Segments()
 {
 	L=0;
 	C=0;
@@ -56,18 +42,25 @@ Segment::Segment()
 	K2=0;
 
 	c=NULL;
-	K=NULL;
+	Kr=NULL;
 }
 
-Segment::~Segment()
+Segments::~Segments()
 {
 	if(c)
 		delete[] c;
-	if(K)
-		delete[] K;
+	if(Kr)
+		delete[] Kr;
 }
 
-void Segment::prepare(int B)
+Segments& Segments::prepare(BitString b)
+{
+	str=b;
+	prepare(str.toString().length());
+	return *this;
+}
+
+void Segments::prepare(int B)
 {
 	if(B<=Z)
 	{
@@ -85,7 +78,7 @@ void Segment::prepare(int B)
 	calculate();
 }
 
-void Segment::calculate()
+void Segments::calculate()
 {
 
 	int j=0;
@@ -114,10 +107,10 @@ void Segment::calculate()
 	F=C2*K2+C1*K1 -B_;
 }
 
-void Segment::encode(BitString b_,char filler)
+void Segments::encode(char filler)
 {
 	c= new char[C*K1];
-	K= new int[C];
+	Kr= new int[C];
 
 	int k;
 	for(k=0; k<F; k++)
@@ -129,47 +122,61 @@ void Segment::encode(BitString b_,char filler)
 
 	for(int r=0; r<C; r++)
 	{
-		if(r<C1)
-			K[r]=K2;
+		if(r<C2)
+			Kr[r]=K2;
 		else
-			K[r]=K1;
+			Kr[r]=K1;
 
 
-		while(k<K[r]-L)
+		while(k<Kr[r]-L)
 		{
-			c[r*K1+k]=b_.toString()[s];
+			c[r*K1+k]=str.toString()[s];
 			k++;
 			s++;
 		}
 
 		if(C>1)
 		{
-			encodeBlockCRC((char*)(&c[r*K1+0]),k,K[r]);
+			encodeBlockCRC((char*)(&c[r*K1+0]),k,Kr[r]);
 		}
 
 		k=0;
 	}
 }
 
-void Segment::encodeBlockCRC(char* c, int start, int end)
+void Segments::encodeBlockCRC(char* c, int start, int end)
 {
 	CRC crc;
 	crc.setGp(CRC::GCRC24B); //gcrc24b
 
-	BitString cStr="";
-	for(int i=0; i<start; i++)
-	{
-		string str;
-		str.append(1,c[i]);
-		cStr=cStr+str;
-	}
+	BitString bitStr= toString(c, start);
 
-	BitString p=crc.encode(&cStr);
+	BitString p=crc.encode(&bitStr);
 
 	for(int k=start; k<end; k++)
 		c[k]=p[k+L-end];
 }
 
+BitString Segments::toString(char* c, int len)
+{
+	BitString bitStr="";
+	for(int i=0; i<len; i++)
+	{
+		string str;
+		str.append(1,c[i]);
+		bitStr=bitStr+str;
+	}
 
+	return bitStr;
+}
+
+BitString Segments::toString(int r)
+{
+	int offset =0;
+	for(int i=0; i<r; i++)
+		offset+=Kr[i];
+
+	return toString(c+offset, Kr[r]);
+}
 
 

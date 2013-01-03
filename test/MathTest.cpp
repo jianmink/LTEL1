@@ -14,7 +14,7 @@
  *
  ***********************************************************************
  *
- * File Name:   Segment.h
+ * File Name:   SegmentTest.cpp
  * Description: This file contains definitions for 
  *                      up¡­
  * -------------------------------------------------------------------------------------------------------
@@ -25,56 +25,19 @@
  ***********************************************************************/
 
 
-#ifndef SEGMENT_H_
-#define SEGMENT_H_
+#include "CppUTest/TestHarness.h"
 
-#include "BitString.h"
-class Segments
+#include "MyMath.h"
+
+TEST_GROUP(TestMath)
 {
 
-BitString str;
-
-public:
-int L;
-int C;
-int B_;
-int Z;
-
-int K1;  //K+
-int K2;  //K_
-
-int C1;   //C+
-int C2;   //C_
-
-int F;
-
-char* c;
-int* Kr;
-
-public:
-	Segments();
-	~Segments();
-	void setMaxBlockSizeInBit(int z){Z=z;}
-	int getMaxBlockSizeInBit(){return Z;}
-	void prepare(int);
-	Segments& prepare(BitString);
-
-	int getCRCLen(){return L;}
-	int getNumSegments(){return C;}
-	int getNumBitsAfter(){return B_;}
-
-	int getKPlus(){return K1;}
-	int getKMinus(){return K2;}
-	void encode(char filler='0');
-
-	BitString toString(char*, int);
-	BitString toString(int);
-
-private:
-	void calculate();
-
-	void encodeBlockCRC(char*, int, int);
 };
 
 
-#endif /* SEGMENT_H_ */
+TEST(TestMath, ceil)
+{
+	LONGS_EQUAL(2,ceil(1.00408));
+	LONGS_EQUAL(1,ceil(1));
+}
+
