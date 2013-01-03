@@ -73,7 +73,7 @@ public:
 private:
 	void calculate();
 
-	void encodeBlockCRC(char*, int, int);
+	void encodeBlockCRC(char*, int);
 };
 
 

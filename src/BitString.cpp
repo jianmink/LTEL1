@@ -29,9 +29,9 @@
 string BitString::strip()
 {
 	int i = 0;
-	for (; i < s.length() && s[i] == '0'; i++);
+	for (; i < length() && s[i] == '0'; i++);
 
-	if (i == s.length())
+	if (i == length())
 		return "";
 	else
 		return s.substr(i);
@@ -48,7 +48,7 @@ string BitStringCRCHelper::Xor(string a, string b)
 	if (a.length() != b.length())
 		return "length failure";
 
-	for (int i = 0; i < a.length(); i++)
+	for (int i = 0; i < (int)a.length(); i++)
 	{
 		if (a[i] == b[i])
 			r[i] = '0';

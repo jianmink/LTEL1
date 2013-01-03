@@ -114,8 +114,8 @@ void Segments::calculate()
 	}
 	else
 	{
-		int deltaK=bigSegmentSize-smallSegmentSize;
-		smallSegmentNum=floar((float)(segmentNum*bigSegmentSize-bitNumWithoutFiller)/deltaK);
+		int delta=bigSegmentSize-smallSegmentSize;
+		smallSegmentNum=floar((float)(segmentNum*bigSegmentSize-bitNumWithoutFiller)/delta);
 		bigSegmentNum=segmentNum-smallSegmentNum;
 	}
 
@@ -152,24 +152,25 @@ void Segments::encode(char filler)
 
 		if(segmentNum>1)
 		{
-			encodeBlockCRC((char*)(&outputBits[r*bigSegmentSize+0]),k,segmentLenArray[r]);
+			encodeBlockCRC((char*)(&outputBits[r*bigSegmentSize+0]),k);
 		}
 
 		k=0;
 	}
 }
 
-void Segments::encodeBlockCRC(char* c, int start, int end)
+void Segments::encodeBlockCRC(char* c, int len)
 {
 	CRC crc;
-	crc.setGp(CRC::GCRC24B); //gcrc24b
+	crc.setGp(CRC::GCRC24B);
 
-	BitString bitStr= toString(c, start);
+	BitString bitStr= toString(c, len);
 
-	BitString p=crc.encode(&bitStr);
+	BitString crcResult=crc.encode(&bitStr);
 
-	for(int k=start; k<end; k++)
-		c[k]=p[k+gpLen-end];
+	int end=len+crcResult.length();
+	for(int i=len; i<end; i++)
+		c[i]=crcResult[i+gpLen-end];
 }
 
 BitString Segments::toString(char* c, int len)

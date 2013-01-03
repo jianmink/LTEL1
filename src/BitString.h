@@ -59,6 +59,8 @@ public:
 	string toString(){return s;}
 	void operator<<(int p){for(int i=0; i<p; i++)s+="0";}
 
+	int length(){return (int)s.length();}
+
 //CRCEnable
 	bool isDivisible(GeneratorPolynomials gp)
 	{return helper.isDivisible(s,gp);	}
