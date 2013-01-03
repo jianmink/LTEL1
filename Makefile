@@ -9,7 +9,7 @@ CPPUTEST_HOME = ../3PP/CppUTest-v3.1
 
 CPPUTEST_USE_EXTENSIONS = Y
 CPP_PLATFORM = Gcc
-
+CPPUTEST_WARNINGFLAGS = -W
 
 # This line is overriCPPUTEST_HOMEding the default new macros.  This is helpful
 # when using std library includes like <list> and other containers
