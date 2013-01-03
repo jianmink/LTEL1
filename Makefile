@@ -17,7 +17,8 @@ CPPUTEST_WARNINGFLAGS = -W
 CPPUTEST_MEMLEAK_DETECTOR_NEW_MACRO_FILE = -include src/ExamplesNewOverrides.h
 SRC_DIRS = \
 	src\
-	src/CRC
+	src/CRC\
+	src/Segment
 
 TEST_SRC_DIRS = \
 	test
@@ -26,6 +27,7 @@ INCLUDE_DIRS =\
   .\
   src\
   src/CRC\
+  src/Segment\
   $(CPPUTEST_HOME)/include\
 
 
